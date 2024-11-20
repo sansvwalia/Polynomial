@@ -1,0 +1,135 @@
+import Node
+import LinkedList
+
+# Code by Sanskriti Walia completed on 11/19/2024 for Project 2 CMPSC 132
+#Node class to represent a single term in the polynomial
+class Node:
+    def __init__(self, coefficient =0, exponent = 0, next = None):
+        self.coefficient = coefficient
+        self.exponent = exponent
+        self.next = next
+
+class Polynomial:
+    def __init__(self):
+        self.head = None
+        self.size = 0
+    
+    def __add_term__(self, coefficient, exponent):
+        new_node = Node(coefficient, exponent)
+
+        if self.head is None or self.head.exponent < exponent:
+            new_node.next = self.head
+            self.head = new_node
+            self.size += 1
+            return
+        
+        current = self.head
+        while current.next is not None and current.next.exponent > exponent:
+            current = current.next
+
+        if current.next is not None and current.next.exponent == exponent:
+            current.next.coefficient +=coefficient
+        else:
+            new_node.next = current.next
+            current.next = new_node
+            self.size +=1
+
+
+
+    def __add__(self, other):
+        result = Polynomial()
+        p1 = self.head
+        p2 = other.head
+
+        while p1 is not None or p2 is not None:
+            if p1 is None:
+                result.__add_term__(p2.coefficient, p2.exponent)
+                p2 = p2.next
+            elif p2 is None:
+                result.__add_term__(p1.coefficient, p1.exponent)
+                p1 = p1.next
+            elif p1.exponent > p2.exponent:
+                result.__add_term__(p1.coefficient, p1.exponent)
+                p1 = p1.next
+            elif p1.exponent < p2.exponent:
+                result.__add_term__(p2.coefficient, p2.exponent)
+                p2 = p2.next
+            else:
+                # if exponents are same
+                new_coefficient = p1.coefficient + p2.coefficient
+                if new_coefficient != 0:
+                    result.__add_term__(new_coefficient, p1.exponent)
+                p1 = p1.next
+                p2 = p2.next
+
+        return result                
+        
+
+    def __repr__(self):
+        if self.head is None:
+            return 0
+        
+        elements = []
+        current = self.head
+
+        while current is not None:
+            if current.exponent == 0:
+               term = f'{current.coefficient}'
+            elif current.exponent == 1:
+               term = f'{current.coefficient}x'
+            else:
+               term = f'{current.coefficient}x^{current.exponent}'
+
+            elements.append(term)
+            current = current.next
+        return "+".join(elements).replace("+,-", "-")
+
+    
+#usage of the polynomial class
+#client program
+
+if __name__ == "__main__":
+
+    p1 = Polynomial()
+
+    cf1 = int(input("Enter the first co-efficient:"))
+    e1 = int(input("Enter the first exponent: "))
+
+    cf2 = int(input("Enter the second co-efficient:"))
+    e2 = int(input("Enter the second exponent: "))
+
+    cf3 = int(input("Enter the third co-efficient:"))
+    e3 = int(input("Enter the third exponent: "))
+
+    p1.__add_term__(cf1, e1)
+    p1.__add_term__(cf2, e2)
+    p1.__add_term__(cf3, e3)
+
+
+    print("First polynomial user entered =", p1)
+    print()
+
+
+    p2 = Polynomial()
+
+    cf12 = int(input("Enter the first co-efficient:"))
+    e12 = int(input("Enter the first exponent: "))
+
+    cf22 = int(input("Enter the second co-efficient:"))
+    e22 = int(input("Enter the second exponent: "))
+
+    cf32 = int(input("Enter the third co-efficient:"))
+    e32 = int(input("Enter the third exponent: "))
+    
+    p2.__add_term__(cf12, e12)
+    p2.__add_term__(cf22, e22)
+    p2.__add_term__(cf32, e32)
+
+    
+    print("Second polynomail user entered:", p2)
+    print()
+
+    p3 = p1 + p2
+    
+    print("Addition of two polynomails =", p3)
+
